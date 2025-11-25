@@ -2,6 +2,7 @@ import csv
 import sys
 import re
 from datetime import datetime
+from html import escape as html_escape_builtin
 
 def read_csv(path):
     encs = ("utf-8-sig", "utf-8", "gb18030", "gbk")
@@ -84,16 +85,35 @@ def build_md(items):
 
     nav = []
     for (ctext, cslug), lst in sorted(cat_map.items(), key=lambda x: -len(x[1])):
-        nav.append(f"- [{ctext} · {len(lst)}](#{anchor(ctext)})")
+        nav.append(f"- [{ctext} · {len(lst)}](#{cslug})")
 
     sections = []
+    def render_table(lst, with_numbers=False, start_index=1):
+        rows = ["<table>"]
+        idx = start_index
+        for i in range(0, len(lst), 2):
+            left = html_escape_builtin(lst[i], quote=False)
+            if with_numbers:
+                left = f"{idx}. {left}"
+            idx += 1
+            if i + 1 < len(lst):
+                right = html_escape_builtin(lst[i+1], quote=False)
+                if with_numbers:
+                    right = f"{idx}. {right}"
+                idx += 1
+            else:
+                right = ""
+            rows.append(f"<tr><td>{left}</td><td>{right}</td></tr>")
+        rows.append("</table>")
+        return rows
+
     for (ctext, cslug), lst in sorted(cat_map.items(), key=lambda x: -len(x[1])):
         sections.append("")
-        sections.append(f"### {ctext}")
+        sections.append(f"<a id=\"{cslug}\"></a>")
+        sections.append(f"<h3 id=\"{cslug}\">{ctext}</h3>")
         sections.append("")
         sections.append("<details><summary>展开查看</summary>\n")
-        for i, n in enumerate(lst, 1):
-            sections.append(f"- {n}")
+        sections.extend(render_table(lst, with_numbers=False))
         sections.append("\n</details>")
 
     full = [
@@ -102,9 +122,9 @@ def build_md(items):
         "",
         "## 全部项目",
         "",
+        "<table>",
     ]
-    for i, n in enumerate(items, 1):
-        full.append(f"{i}. {n}")
+    full.extend(render_table(items, with_numbers=True, start_index=1))
 
     lines = head + nav + sections + full
     return "\n".join(lines) + "\n"
