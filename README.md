@@ -2574,7 +2574,7 @@
 </details>
 
 ---
-
+<details><summary>展开查看</summary>
 ## 全部项目
 
 <table>
@@ -3982,4 +3982,4 @@
 <tr><td>2801. 基于Web的社区医院管理服务系统--论文</td><td>2802. 家乡特色推荐系统--论文</td></tr>
 <tr><td>2803. 家政服务管理平台--论文</td><td></td></tr>
 </table>
-
+</details>
