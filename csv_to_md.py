@@ -98,13 +98,13 @@ def build_md(items):
 
     full = [
         "",
-        "## 全部列表",
+        "---",
         "",
-        "<details open><summary>全部项目（按原始顺序）</summary>\n",
+        "## 全部项目",
+        "",
     ]
     for i, n in enumerate(items, 1):
-        full.append(f"- {i}. {n}")
-    full.append("\n</details>")
+        full.append(f"{i}. {n}")
 
     lines = head + nav + sections + full
     return "\n".join(lines) + "\n"
